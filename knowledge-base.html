@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>棰愯幉鏍囧噯鍖栫煡璇嗗簱</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:#070E1A;color:#F0F4F8;overflow:hidden}
+.sidebar{position:fixed;left:0;top:0;width:200px;height:100vh;background:#0A1628;border-right:1px solid rgba(0,212,255,0.12);z-index:900;display:flex;flex-direction:column}
+.sidebar-brand{padding:16px 16px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(0,212,255,0.08)}
+.sidebar-brand .logo-icon{width:28px;height:28px;border-radius:6px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);display:flex;align-items:center;justify-content:center;font-weight:700;color:#00D4FF;font-size:13px}
+.sidebar-brand .logo-text{font-size:13px;font-weight:600;color:#F0F4F8;letter-spacing:0.05em}
+.sidebar-divider{margin:0 16px;height:1px;background:rgba(0,212,255,0.06)}
+.sidebar-nav{flex:1;padding:12px 10px}
+.sidebar-nav .nav-item{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;border-left:3px solid transparent;color:#A0B4C8;font-size:12.5px;text-decoration:none;transition:all .2s;margin-bottom:4px;cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;text-align:left}
+.sidebar-nav .nav-item:hover{background:rgba(0,212,255,0.05);color:#33DDFF}
+.sidebar-nav .nav-item.active{background:rgba(0,212,255,0.08);border-left-color:#00D4FF;color:#00D4FF}
+.sidebar-nav .nav-item svg{width:16px;height:16px;flex-shrink:0}
+.main-content{position:absolute;top:0;left:200px;width:calc(100vw - 200px);height:100vh;overflow:hidden}
+.kb-container{display:flex;height:100%}
+.kb-sidebar{width:210px;height:100%;background:#0A1628;border-right:1px solid rgba(0,212,255,0.08);display:flex;flex-direction:column;flex-shrink:0}
+.kb-sidebar-header{padding:14px 16px;border-bottom:1px solid rgba(0,212,255,0.06);display:flex;align-items:center;gap:8px}
+.kb-sidebar-header svg{color:#00D4FF;width:16px;height:16px}
+.kb-sidebar-header h2{font-size:13px;font-weight:600;color:#F0F4F8}
+.kb-sidebar-nav{flex:1;overflow-y:auto;padding:8px}
+.kb-sidebar-nav .cat-btn{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:5px;border-left:2px solid transparent;color:#A0B4C8;font-size:12px;background:none;border-right:none;border-top:none;border-bottom:none;text-align:left;cursor:pointer;transition:all .15s;margin-bottom:2px;font-family:inherit}
+.kb-sidebar-nav .cat-btn:hover{background:rgba(0,212,255,0.04);color:#F0F4F8}
+.kb-sidebar-nav .cat-btn.active{background:rgba(0,212,255,0.07);border-left-color:#00D4FF;color:#00D4FF}
+.kb-sidebar-nav .cat-btn .count{margin-left:auto;font-size:11px;color:#5A6F84;font-family:monospace}
+.kb-sidebar-nav .cat-btn.active .count{color:#00D4FF}
+.kb-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.kb-toolbar{padding:12px 20px;border-bottom:1px solid rgba(0,212,255,0.06);display:flex;align-items:center;gap:16px;flex-shrink:0}
+.kb-search{position:relative;flex:1;max-width:360px}
+.kb-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#5A6F84;width:14px;height:14px}
+.kb-search input{width:100%;height:34px;padding-left:30px;padding-right:12px;border-radius:6px;border:1px solid rgba(0,212,255,0.12);background:rgba(0,212,255,0.03);color:#F0F4F8;font-size:12px;outline:none;font-family:inherit;transition:all .2s}
+.kb-search input:focus{border-color:rgba(0,212,255,0.35);box-shadow:0 0 8px rgba(0,212,255,0.08)}
+.kb-search input::placeholder{color:#5A6F84}
+.kb-count{font-size:12px;color:#5A6F84}
+.kb-grid{flex:1;overflow-y:auto;padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+.kb-doc-card{background:rgba(10,22,42,0.7);border:1px solid rgba(0,212,255,0.08);border-radius:8px;padding:14px;cursor:pointer;transition:all .2s}
+.kb-doc-card:hover{border-color:rgba(0,212,255,0.2);box-shadow:0 2px 12px rgba(0,212,255,0.06);transform:translateY(-1px)}
+.kb-doc-card .doc-icon{width:32px;height:32px;border-radius:6px;background:rgba(0,212,255,0.07);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.kb-doc-card .doc-icon svg{color:#00D4FF;width:16px;height:16px}
+.kb-doc-card h3{font-size:12.5px;font-weight:500;color:#F0F4F8;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-doc-meta{display:flex;gap:12px;font-size:11px;color:#5A6F84}
+.kb-doc-meta span{display:flex;align-items:center;gap:4px}
+.kb-doc-meta svg{width:11px;height:11px}
+.kb-doc-tag{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:3px;background:rgba(0,212,255,0.06);color:#00D4FF;font-size:10.5px;border:1px solid rgba(0,212,255,0.1)}
+.kb-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#5A6F84;font-size:13px;grid-column:1/-1}
+.kb-empty svg{width:48px;height:48px;margin-bottom:12px;opacity:.3;color:#5A6F84}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(7,14,26,0.75);backdrop-filter:blur(4px);z-index:10000;display:flex;align-items:center;justify-content:center}
+.modal-content{background:#0A1628;border:1px solid rgba(0,212,255,0.15);border-radius:10px;width:90%;max-width:640px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(0,212,255,0.08)}
+.modal-header h2{font-size:15px;font-weight:600;color:#F0F4F8}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:#5A6F84;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(0,212,255,0.08);color:#00D4FF}
+.modal-body{padding:16px 18px;overflow-y:auto;flex:1}
+.modal-body .doc-info{display:flex;gap:16px;font-size:12px;color:#5A6F84;margin-bottom:14px;flex-wrap:wrap}
+.modal-body .doc-info span{display:flex;align-items:center;gap:4px}
+.modal-body .doc-info svg{width:12px;height:12px}
+.modal-body .doc-content{background:rgba(10,22,42,0.9);border-radius:6px;padding:14px;font-size:13px;color:#A0B4C8;line-height:1.7;border:1px solid rgba(0,212,255,0.06);min-height:100px}
+.modal-body .doc-keywords{margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.modal-body .doc-keywords .kw-label{font-size:11px;color:#5A6F84}
+.modal-body .doc-keywords .kw-tag{padding:2px 8px;border-radius:3px;background:rgba(0,212,255,0.06);color:#00D4FF;font-size:10.5px;border:1px solid rgba(0,212,255,0.1)}
+.modal-footer{padding:12px 18px;border-top:1px solid rgba(0,212,255,0.08);display:flex;justify-content:flex-end}
+.modal-footer button{padding:7px 18px;border-radius:6px;border:none;background:rgba(0,212,255,0.12);color:#00D4FF;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.modal-footer button:hover{background:rgba(0,212,255,0.2)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.15);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- 宸︿晶瀵艰埅鏍?-->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-icon">棰?/div>
+    <span class="logo-text">棰愯幉浜嬩笟閮?/span>
+  </div>
+  <div class="sidebar-divider"></div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="5" y1="14" x2="8" y2="17"/><line x1="19" y1="14" x2="16" y2="17"/></svg>
+      浜嬩笟閮ㄧ粍缁囨灦鏋勫浘
+    </a>
+    <a class="nav-item active" href="knowledge-base.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      鏍囧噯鍖栫煡璇嗗簱
+    </a>
+  </nav>
+</aside>
+
+<!-- 涓诲唴瀹瑰尯 -->
+<div class="main-content">
+  <div class="kb-container">
+    <!-- 鐭ヨ瘑搴撳垎绫讳晶杈规爮 -->
+    <aside class="kb-sidebar">
+      <div class="kb-sidebar-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h2>鐭ヨ瘑鍒嗙被</h2>
+      </div>
+      <nav class="kb-sidebar-nav" id="catNav"></nav>
+    </aside>
+
+    <!-- 鏂囨。鍒楄〃 -->
+    <main class="kb-main">
+      <div class="kb-toolbar">
+        <div class="kb-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="鎼滅储鏂囨。鏍囬銆佸叧閿瘝...">
+        </div>
+        <span class="kb-count" id="docCount">鍏?0 涓枃妗?/span>
+      </div>
+      <div class="kb-grid" id="docGrid"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const categories=[{id:0,name:'鍏ㄩ儴鏂囨。'},{id:1,name:'鍏徃绫?},{id:2,name:'宀椾綅SOP绫?},{id:3,name:'琛屼笟鑾峰彇缃戠珯绫?},{id:4,name:'鎶€鑳界被'},{id:5,name:'鍏朵粬绫?}];
+const documents=[
+  {id:1,cat:1,title:'鍏徃缁勭粐鏋舵瀯璇存槑',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'缁勭粐鏋舵瀯,鍏徃',by:'绠＄悊鍛?,date:'2024-01-15',attach:true},
+  {id:2,cat:1,title:'鍏徃瑙勭珷鍒跺害鎵嬪唽',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'鍒跺害,瑙勭珷',by:'绠＄悊鍛?,date:'2024-01-10',attach:false},
+  {id:3,cat:2,title:'杩愯惀宀椾綅SOP鎵嬪唽',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'SOP,杩愯惀',by:'绠＄悊鍛?,date:'2024-01-14',attach:true},
+  {id:4,cat:2,title:'瀹㈡湇宀椾綅鎿嶄綔瑙勮寖',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'瀹㈡湇,瑙勮寖',by:'绠＄悊鍛?,date:'2024-01-09',attach:true},
+  {id:5,cat:3,title:'琛屼笟鏁版嵁鑾峰彇缃戠珯姹囨€?,content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'鏁版嵁,缃戠珯',by:'绠＄悊鍛?,date:'2024-01-13',attach:false},
+  {id:6,cat:3,title:'绔炲搧鍒嗘瀽宸ュ叿娓呭崟',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'绔炲搧,宸ュ叿',by:'绠＄悊鍛?,date:'2024-01-08',attach:true},
+  {id:7,cat:4,title:'鏁版嵁鍒嗘瀽鎶€鑳藉煿璁?,content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'鍩硅,鎶€鑳?,by:'绠＄悊鍛?,date:'2024-01-12',attach:true},
+  {id:8,cat:4,title:'Excel楂樼骇鍑芥暟鏁欑▼',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'Excel,鏁欑▼',by:'绠＄悊鍛?,date:'2024-01-07',attach:false},
+  {id:9,cat:5,title:'鍏朵粬鍙傝€冭祫鏂欐眹缂?,content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'鍙傝€?,by:'绠＄悊鍛?,date:'2024-01-11',attach:false},
+  {id:10,cat:5,title:'甯哥敤閾炬帴鏀惰棌',content:'鍚庡彴鍙紪杈戝崰浣嶅唴瀹?,keywords:'閾炬帴',by:'绠＄悊鍛?,date:'2024-01-06',attach:false},
+];
+
+let activeCat=0,searchText='';
+
+function getCatCount(catId){return catId===0?documents.length:documents.filter(d=>d.cat===catId).length;}
+
+function renderCats(){
+  document.getElementById('catNav').innerHTML=categories.map(c=>{
+    const isActive=activeCat===c.id;
+    return `<button class="cat-btn${isActive?' active':''}" onclick="setCat(${c.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg><span class="truncate">${c.name}</span><span class="count">${getCatCount(c.id)}</span></button>`;
+  }).join('');
+}
+
+function setCat(id){activeCat=id;renderCats();renderDocs();}
+
+function renderDocs(){
+  const filtered=documents.filter(d=>{
+    const mc=activeCat===0||d.cat===activeCat;
+    const ms=!searchText||d.title.toLowerCase().includes(searchText.toLowerCase())||(d.keywords&&d.keywords.toLowerCase().includes(searchText.toLowerCase()));
+    return mc&&ms;
+  });
+  document.getElementById('docCount').textContent=`鍏?${filtered.length} 涓枃妗;
+  const grid=document.getElementById('docGrid');
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="kb-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>鏆傛棤鏂囨。</div>`;
+    return;
+  }
+  grid.innerHTML=filtered.map(doc=>{
+    const catName=categories.find(c=>c.id===doc.cat)?.name||'';
+    return `<div class="kb-doc-card" onclick="openDoc(${doc.id})">
+      <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <h3>${doc.title}</h3>
+      <div class="kb-doc-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${doc.date}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${doc.by}</span>
+        ${doc.attach?'<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>闄勪欢</span>':''}
+      </div>
+      <span class="kb-doc-tag">${catName}</span>
+    </div>`;
+  }).join('');
+}
+
+function openDoc(id){
+  const doc=documents.find(d=>d.id===id);if(!doc)return;
+  const catName=categories.find(c=>c.id===doc.cat)?.name||'';
+  const kws=doc.keywords?doc.keywords.split(',').map(k=>`<span class="kw-tag">${k.trim()}</span>`).join(''):'';
+  const overlay=document.createElement('div');overlay.className='modal-overlay';overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  overlay.innerHTML=`<div class="modal-content">
+    <div class="modal-header"><h2>${doc.title}</h2><button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="doc-info">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>鏇存柊鏃堕棿锛?{doc.date}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>涓婁紶浜猴細${doc.by}</span>
+        <span class="kw-tag">${catName}</span>
+      </div>
+      <div class="doc-content">${doc.content}</div>
+      ${kws?`<div class="doc-keywords"><span class="kw-label">鍏抽敭璇嶏細</span>${kws}</div>`:''}
+      ${doc.attach?`<div style="margin-top:14px;display:flex;align-items:center;gap:6px;font-size:12px;color:#00D4FF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>鏈夐檮浠跺彲涓嬭浇</div>`:''}
+    </div>
+    <div class="modal-footer"><button onclick="this.closest('.modal-overlay').remove()">鍏抽棴</button></div>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+document.getElementById('searchInput').addEventListener('input',function(e){searchText=e.target.value;renderDocs();});
+renderCats();renderDocs();
+</script>
+</body>
+</html>
+
