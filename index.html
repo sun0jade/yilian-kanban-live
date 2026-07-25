@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./lotus-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>棰愯幉浜嬩笟閮ㄦ暟鎹鐞嗙湅鏉?/title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="./assets/index-6IVyrV-8.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D--qBPR1.css">
+    <style>
+      .app-layout{display:flex;height:100vh;overflow:hidden;background:#070E1A}
+      /* Sidebar - icon mode default, fixed */
+      .app-sidebar{position:fixed;left:0;top:0;bottom:0;width:56px;background:#0A1628;border-right:1px solid rgba(0,212,255,0.1);display:flex;flex-direction:column;z-index:900;transition:width 0.3s ease}
+      .app-sidebar.expanded{width:180px}
+      .app-sidebar-brand{padding:14px 0 10px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,212,255,0.06)}
+      .app-sidebar-brand .s-logo{width:28px;height:28px;border-radius:6px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;font-weight:700;color:#00D4FF;font-size:13px;font-family:'Noto Sans SC',sans-serif;flex-shrink:0}
+      .app-sidebar-brand .s-text{font-size:13px;font-weight:600;color:#F0F4F8;letter-spacing:0.03em;font-family:'Noto Sans SC',sans-serif;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:all 0.3s;margin-left:0}
+      .app-sidebar.expanded .app-sidebar-brand{padding:14px 14px 10px;justify-content:flex-start}
+      .app-sidebar.expanded .app-sidebar-brand .s-text{opacity:1;max-width:120px;margin-left:8px}
+      .app-sidebar-div{margin:0 10px;height:1px;background:rgba(0,212,255,0.05)}
+      .app-sidebar-nav{flex:1;padding:10px 6px}
+      .app-sidebar-nav .s-nav-item{width:100%;display:flex;align-items:center;gap:0;padding:10px;border-radius:6px;border-left:3px solid transparent;color:#A0B4C8;font-size:12.5px;text-decoration:none;transition:all .18s;margin-bottom:3px;cursor:pointer;background:transparent;border-right:none;border-top:none;border-bottom:none;text-align:left;font-family:'Noto Sans SC',sans-serif;justify-content:center;white-space:nowrap}
+      .app-sidebar.expanded .app-sidebar-nav .s-nav-item{gap:9px;padding:10px 11px;justify-content:flex-start}
+      .app-sidebar-nav .s-nav-item:hover{background:rgba(0,212,255,0.05);color:#33DDFF}
+      .app-sidebar-nav .s-nav-item.active{background:rgba(0,212,255,0.07);border-left-color:#00D4FF;color:#00D4FF}
+      .app-sidebar-nav .s-nav-item .nav-label{opacity:0;max-width:0;overflow:hidden;transition:all 0.3s}
+      .app-sidebar.expanded .app-sidebar-nav .s-nav-item .nav-label{opacity:1;max-width:140px}
+      .app-sidebar-nav .s-nav-item svg{flex-shrink:0}
+      .sidebar-toggle{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:28px;height:28px;border-radius:6px;border:1px solid rgba(0,212,255,0.15);background:rgba(0,212,255,0.05);color:#5A6F84;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:10}
+      .sidebar-toggle:hover{background:rgba(0,212,255,0.1);color:#00D4FF}
+      .app-sidebar.expanded .sidebar-toggle{transform:translateX(-50%) rotate(180deg)}
+      /* Main content - offset by sidebar width */
+      .app-main{position:absolute;left:56px;top:0;right:0;bottom:0;overflow:auto;transition:left 0.3s ease}
+      .app-sidebar.expanded ~ .app-main{left:180px}
+
+      /* Personnel Bubble - fixed right side, overlays on tooltip */
+      .pb-overlay{position:fixed;right:0;top:0;bottom:0;width:260px;z-index:2147483648;pointer-events:none}
+      .pb-card{position:absolute;right:0;top:0;width:260px;height:100vh;background:rgba(10,22,40,0.98);border:1px solid rgba(0,212,255,0.2);border-left:2px solid rgba(0,212,255,0.15);box-shadow:-4px 0 24px rgba(0,0,0,0.6);overflow:hidden;pointer-events:auto;transition:opacity 0.18s,transform 0.18s;opacity:0;transform:translateX(30px);font-family:'Noto Sans SC',sans-serif}
+      .pb-card.show{opacity:1;transform:translateX(0)}
+      .pb-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,212,255,0.05);border-bottom:1px solid rgba(0,212,255,0.08)}
+      .pb-header .pb-name{font-size:13px;font-weight:600;color:#00D4FF}
+      .pb-header .pb-close{width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:#5A6F84;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1}
+      .pb-header .pb-close:hover{background:rgba(0,212,255,0.1);color:#00D4FF}
+      .pb-body{padding:12px 14px}
+      .pb-section{margin-bottom:10px}
+      .pb-section:last-child{margin-bottom:0}
+      .pb-section-title{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;margin-bottom:5px}
+      .pb-section-title .pb-bar{width:3px;height:12px;border-radius:2px}
+      .pb-section-text{font-size:11px;line-height:1.6;color:#A0B4C8}
+      .pb-shops{display:flex;flex-wrap:wrap;gap:4px}
+      .pb-shop-tag{font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.1);color:#8A9BB0}
+    </style>
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- 宸︿晶瀵艰埅鏍?-->
+      <aside class="app-sidebar" id="appSidebar">
+        <div class="app-sidebar-brand">
+          <div class="s-logo">棰?/div>
+          <span class="s-text">棰愯幉浜嬩笟閮?/span>
+        </div>
+        <div class="app-sidebar-div"></div>
+        <nav class="app-sidebar-nav">
+          <button class="s-nav-item active" onclick="switchTab('org',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="5" y1="14" x2="8" y2="17"/><line x1="19" y1="14" x2="16" y2="17"/></svg>
+            <span class="nav-label">浜嬩笟閮ㄧ粍缁囨灦鏋勫浘</span>
+          </button>
+          <button class="s-nav-item" onclick="switchTab('kb',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span class="nav-label">鏍囧噯鍖栫煡璇嗗簱</span>
+          </button>
+        </nav>
+        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="灞曞紑/鏀惰捣">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      </aside>
+
+      <!-- 涓诲唴瀹瑰尯 -->
+      <div class="app-main" id="mainContainer">
+        <div id="root" style="width:100%;height:100%"></div>
+      </div>
+    </div>
+
+    <!-- Personnel Bubble -->
+    <div class="pb-overlay" id="pbOverlay" style="display:none" onclick="if(event.target===this)_hidePB()">
+      <div class="pb-card" id="pbCard">
+        <div class="pb-header">
+          <span class="pb-name" id="pbName"></span>
+          <button class="pb-close" onclick="_hidePB()">&times;</button>
+        </div>
+        <div class="pb-body" id="pbBody"></div>
+      </div>
+    </div>
+
+    <script>
+      // ========== Sidebar ==========
+      function toggleSidebar() {
+        var sb = document.getElementById('appSidebar');
+        sb.classList.toggle('expanded');
+        setTimeout(function() {
+          window.dispatchEvent(new Event('resize'));
+        }, 350);
+      }
+      function switchTab(tab, el) {
+        document.querySelectorAll('.s-nav-item').forEach(function(n) { n.classList.remove('active'); });
+        el.classList.add('active');
+        if (tab === 'kb') window.location.href = '/knowledge-base.html';
+      }
+      (function() {
+        if (window.innerWidth > 1600) {
+          document.getElementById('appSidebar').classList.add('expanded');
+        }
+      })();
+
+      // ========== Personnel Bubble ==========
+      var _pbTimer = null;
+      var _pbCurrent = null;
+
+      function _showPB(person) {
+        _pbCurrent = person;
+        if (_pbTimer) clearTimeout(_pbTimer);
+        var overlay = document.getElementById('pbOverlay');
+        var card = document.getElementById('pbCard');
+        var nameEl = document.getElementById('pbName');
+        var bodyEl = document.getElementById('pbBody');
+
+        // Get person data
+        var personName = typeof person === 'string' ? person : (person.name || '');
+        var kpi = person.kpi || '';
+        var shops = person.shops || [];
+
+        nameEl.textContent = personName;
+
+        // Build body content
+        var html = '';
+        if (kpi) {
+          html += '<div class="pb-section">' +
+            '<div class="pb-section-title"><span class="pb-bar" style="background:#C9A96E"></span><span style="color:#C9A96E">鑰冩牳鎸囨爣</span></div>' +
+            '<div class="pb-section-text">' + _esc(kpi) + '</div></div>' +
+            '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.15),transparent);margin:8px 0"></div>';
+        }
+        if (shops.length > 0) {
+          html += '<div class="pb-section">' +
+            '<div class="pb-section-title"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span style="color:#5A6F84">璐熻矗搴楅摵</span></div>' +
+            '<div class="pb-shops">' + shops.map(function(s){return '<span class="pb-shop-tag">'+_esc(s)+'</span>'}).join('') + '</div></div>';
+        }
+        if (!kpi && shops.length === 0) {
+          html = '<div class="pb-section-text" style="color:#5A6F84;text-align:center;padding:10px 0">鏆傛棤璇︾粏淇℃伅</div>';
+        }
+        bodyEl.innerHTML = html;
+
+        overlay.style.display = 'block';
+        requestAnimationFrame(function() { card.classList.add('show'); });
+      }
+
+      function _hidePB() {
+        var overlay = document.getElementById('pbOverlay');
+        var card = document.getElementById('pbCard');
+        card.classList.remove('show');
+        _pbTimer = setTimeout(function() {
+          overlay.style.display = 'none';
+          _pbCurrent = null;
+        }, 180);
+      }
+
+      function _esc(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      // Keep PB visible when hovering over the card itself
+      document.getElementById('pbCard').addEventListener('mouseenter', function() {
+        if (_pbTimer) clearTimeout(_pbTimer);
+      });
+      document.getElementById('pbCard').addEventListener('mouseleave', function() {
+        _hidePB();
+      });
+
+      // ESC or click outside to close tooltip and PersonnelBubble
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          var tooltip = document.querySelector('[style*="z-index:2147483647"]');
+          if (tooltip) {
+            // Dispatch a click event on the tooltip itself to trigger onClick:rt
+            var ev = new MouseEvent('click', {bubbles:true});
+            tooltip.dispatchEvent(ev);
+          }
+          _hidePB();
+        }
+      });
+      // Click outside tooltip card to close
+      document.addEventListener('mousedown', function(e) {
+        var tooltip = document.querySelector('[style*="z-index:2147483647"]');
+        if (tooltip && !tooltip.contains(e.target)) {
+          var ev = new MouseEvent('click', {bubbles:true});
+          tooltip.dispatchEvent(ev);
+        }
+      });
+    </script>
+  </body>
+</html>
+
